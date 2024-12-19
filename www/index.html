@@ -159,6 +159,19 @@ function canEditPost(post) {
     return currentUser && post.userId === currentUser.uid;
 }
 
+function likePost(postId) {
+    const postRef = postsRef.child(postId);
+    postRef.transaction((post) => {
+        if (post) {
+            if (!post.likes) post.likes = 0;
+            post.likes++;
+        }
+        return post;
+    })
+}
+
+
+
 // 投稿のHTML要素を生成
 // 　バグ入りなので要修正（編集・削除機能表示判定が誤っている）
 function createPostElement(post) {
@@ -173,8 +186,8 @@ function createPostElement(post) {
             <button class="btn-delete" onclick="deletePost('${post.id}')">
                 削除
             </button>
-             <button class="btn-delete" onclick="deletePost('${post.id}')">
-                いいね！
+           <button class="btn-like" onclick="likePost('${post.id}')">
+        💛 <span class="like-count">${post.likes || 0}</span>
             </button>
         </div>
     ` : '';
